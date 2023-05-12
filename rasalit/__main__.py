@@ -16,7 +16,7 @@ def overview(
     folder: str = typer.Option("", help="Folder that contains all Rasa NLU results"),
 ):
     """Gives an overview of all `rasa train nlu` results."""
-    if folder == "":
+    if not folder:
         typer.echo(
             "You need to set the `folder` option manually. Example;\n> rasalit overview --folder path/folder"
         )

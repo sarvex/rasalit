@@ -347,16 +347,14 @@ class BytePairFeaturizer(DenseFeaturizer):
         model_file, emb_file = (
             self.component_config[k] for k in ["model_file", "emb_file"]
         )
-        if model_file:
-            if not os.path.exists(model_file):
-                raise FileNotFoundError(
-                    f"BytePair model {model_file} not found. Please check config."
-                )
-        if emb_file:
-            if not os.path.exists(emb_file):
-                raise FileNotFoundError(
-                    f"BytePair embedding file {emb_file} not found. Please check config."
-                )
+        if model_file and not os.path.exists(model_file):
+            raise FileNotFoundError(
+                f"BytePair model {model_file} not found. Please check config."
+            )
+        if emb_file and not os.path.exists(emb_file):
+            raise FileNotFoundError(
+                f"BytePair embedding file {emb_file} not found. Please check config."
+            )
 
         if not self.component_config["lang"]:
             raise ValueError(
@@ -394,8 +392,7 @@ class BytePairFeaturizer(DenseFeaturizer):
                 self.set_bpemb_features(example, attribute)
 
     def create_word_vector(self, document: Text) -> np.ndarray:
-        encoded_ids = self.model.encode_ids(document)
-        if encoded_ids:
+        if encoded_ids := self.model.encode_ids(document):
             return self.model.vectors[encoded_ids[0]]
 
         return np.zeros((self.component_config["dim"],), dtype=np.float32)
@@ -443,7 +440,4 @@ class BytePairFeaturizer(DenseFeaturizer):
         cached_component: Optional["Component"] = None,
         **kwargs: Any,
     ) -> "Component":
-        if cached_component:
-            return cached_component
-
-        return cls(meta)
+        return cached_component if cached_component else cls(meta)

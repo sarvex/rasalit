@@ -98,13 +98,12 @@ def make_attention_chart(df, tokens, title=""):
 def make_attention_charts(diag_data, tokens):
     n_tf_layer, _, n_heads, _, _ = diag_data.shape
 
-    charts = [[None for i in range(n_tf_layer)] for j in range(n_heads)]
-    for j in range(n_heads):
-        for i in range(n_tf_layer):
-            dataf = parse_token_mat_into_dataframe(diag_data[i][0][j], tokens)
-            charts[j][i] = make_attention_chart(
-                dataf, tokens, title=f"Layer: {i} Head: {j}"
-            )
+    charts = [[None for _ in range(n_tf_layer)] for _ in range(n_heads)]
+    for j, i in it.product(range(n_heads), range(n_tf_layer)):
+        dataf = parse_token_mat_into_dataframe(diag_data[i][0][j], tokens)
+        charts[j][i] = make_attention_chart(
+            dataf, tokens, title=f"Layer: {i} Head: {j}"
+        )
 
     return reduce(lambda x, y: x & y, [reduce(lambda x, y: x | y, c) for c in charts])
 

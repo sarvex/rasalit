@@ -27,4 +27,4 @@ def test_altair_plot(report):
     assert len(d["datasets"][key]) == 18
 
     # Confirm correct columns picked up
-    assert all([v in d["datasets"][key][0] for v in ["config", "variable", "value"]])
+    assert all(v in d["datasets"][key][0] for v in ["config", "variable", "value"])

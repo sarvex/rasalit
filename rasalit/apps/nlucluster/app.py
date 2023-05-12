@@ -60,14 +60,9 @@ def calculate_embeddings(messages, encodings):
 
 
 st.sidebar.markdown("Made with love over at [Rasa](https://rasa.com/).")
-uploaded = st.sidebar.file_uploader(
+if uploaded := st.sidebar.file_uploader(
     "Upload a `.txt` file for clustering. Each utterance should appear on a new line."
-)
-if not uploaded:
-    filepath = resource_filename("rasalit", os.path.join("data", "nlu.md"))
-    txt = pathlib.Path(filepath).read_text()
-    texts = list(set([t for t in txt.split("\n") if len(t) > 0]))
-else:
+):
     bytes_data = uploaded.read()
     stringio = StringIO(bytes_data.decode("utf-8"))
     string_data = stringio.read()
@@ -77,6 +72,10 @@ else:
         if len(t) > 0 and t[0] != "#"
     ]
 
+else:
+    filepath = resource_filename("rasalit", os.path.join("data", "nlu.md"))
+    txt = pathlib.Path(filepath).read_text()
+    texts = list({t for t in txt.split("\n") if len(t) > 0})
 method = st.sidebar.selectbox(
     "Select Embedding Method", ["Lite Sentence Encoding", "CountVector SVD"]
 )

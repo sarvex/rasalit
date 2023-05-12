@@ -10,8 +10,7 @@ def read_reports(folder, report="intent"):
         "intent": "intent_report.json",
         "response": "response_selection_report.json",
     }
-    paths = list(pathlib.Path(folder).glob(f"*/{files[report]}"))
-    if paths:
+    if paths := list(pathlib.Path(folder).glob(f"*/{files[report]}")):
         dicts = [json.loads(p.read_text())["weighted avg"] for p in paths]
         data = [{"config": p.parts[-2], **d} for p, d in zip(paths, dicts)]
         return pd.DataFrame(data).drop(columns=["support"]).melt("config")
